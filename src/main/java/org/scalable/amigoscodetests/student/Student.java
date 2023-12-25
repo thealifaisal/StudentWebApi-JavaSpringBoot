@@ -27,7 +27,7 @@ public class Student {
     }
 
     @Id
-    @GeneratedValue(generator="student_seq", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator="student_seq", strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name="student_seq", allocationSize=1)
     @Column(name = "id")
     private Long id;

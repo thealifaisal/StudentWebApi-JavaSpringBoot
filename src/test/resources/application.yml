@@ -1,6 +1,8 @@
 spring:
   datasource:
-    url: jdbc:h2://mem:db;DB_CLOSE_DELAY=-1
+#    url: jdbc:h2://mem:db;DB_CLOSE_DELAY=-1
+#    throwing error - invalid character at index 5 [:]
+    url: jdbc:h2:mem:registration_db  # this resolved
     password: sa
     username: sa
     driver-class-name: org.h2.Driver
@@ -12,4 +14,6 @@ spring:
 #        dialect: org.hibernate.dialect.PostgreSQLDialect : was causing error while creating a sequence
 #        issue resolution: https://github.com/quarkusio/quarkus/issues/28942#issuecomment-1397746092
         format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+# no dialect set here throws error. adding the H2 dialect fixed that
     show-sql: true

@@ -9,7 +9,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/students")
+@RequestMapping("api/v1/students")
 public class StudentController {
 
     private final StudentService studentService;

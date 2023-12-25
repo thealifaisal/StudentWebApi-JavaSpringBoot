@@ -1,4 +1,4 @@
-package org.scalable.amigoscodetests.middlewares;
+package org.scalable.amigoscodetests.interceptors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

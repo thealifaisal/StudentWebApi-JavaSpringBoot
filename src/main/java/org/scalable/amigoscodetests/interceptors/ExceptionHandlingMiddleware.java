@@ -1,4 +1,4 @@
-package org.scalable.amigoscodetests.middlewares;
+package org.scalable.amigoscodetests.interceptors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

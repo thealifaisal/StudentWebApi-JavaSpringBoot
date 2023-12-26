@@ -1,24 +1,23 @@
 package org.scalable.student_registration_web_api.student.integration_tests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.scalable.student_registration_web_api.student.Student;
+import org.scalable.student_registration_web_api.student.StudentEntityDummyData;
 import org.scalable.student_registration_web_api.student.StudentRepository;
+import org.scalable.student_registration_web_api.utilities.mapper.JsonObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,113 +29,89 @@ public class StudentIntegrationTest {
     private StudentRepository studentRepository;
     @Autowired
     private MockMvc apiController;
+    private final String STUDENT_API_URL = "http://localhost:8080/api/v1/students";
 
     @AfterEach
     public void tearDown(){
         studentRepository.deleteAll();
     }
 
+    /**
+     * create a student
+     *  <br> - test if it is created
+     *  <br> - check api controller response status is ok
+     *  <br> - check repository if student is created with the email
+     * @throws Exception testStudentCreation failed
+     */
     @Test
     public void testStudentCreation() throws Exception {
-        // create a student
-        // test if it is created
-        //  - check api controller response status is ok
-        //  - check repository if student is created with the email
 
         // Arrange
-        var student = new Student(
-                "Ali Faisal",
-                "alifaisalaslam@gmail.com",
-                "17K-1234",
-                "CS"
-        );
-
-        var jsonStudent = objectToJson(student);
-        if (jsonStudent.isEmpty())
-            throw new Exception("Failed to convert student to json.");
-
-        var postRequest = post("http://localhost:8080/api/v1/students")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Objects.requireNonNull(jsonStudent.get()));
-
-        var getRequest = get("http://localhost:8080/api/v1/students")
-                .contentType(MediaType.APPLICATION_JSON);
+        var student = StudentEntityDummyData.getStudent();
+        var jsonStudent = JsonObjectMapper.objectToJson(student);
+        var postRequest = buildPostRequest(jsonStudent);
+        var getRequest = buildGetRequest();
 
         // Act
         var postAction = apiController.perform(postRequest);
 
         // Assert
+        // Via HttpStatus
         postAction.andExpect(status().isOk());
 
-        // Assertion through GET API
+        // Via GET API
         var getStudentJson = apiController.perform(getRequest).andReturn().getResponse().getContentAsString();
-        Optional<List<Student>> students = jsonToObject(getStudentJson, new TypeReference<List<Student>>() {});
-        Assertions.assertTrue(students.isPresent());
-        Assertions.assertTrue(students.get().stream().anyMatch(s -> s.getEmail().equals(student.getEmail())));
+        var students = JsonObjectMapper.jsonToObject(getStudentJson, new TypeReference<List<Student>>() {});
+        Assertions.assertTrue(students.stream().anyMatch(s -> s.getEmail().equals(student.getEmail())));
 
-        // Assertion through Repository
+        // Via Repository
         var isStudentCreated = studentRepository.selectExistsEmail(student.getEmail());
         Assertions.assertTrue(isStudentCreated);
     }
 
+    /**
+     * create a student
+     *  <br> - test if it is deleted
+     *  <br> - check api controller response status is ok
+     *  <br> - check repository if student is deleted
+     * @throws Exception testStudentDeletion failed
+     */
     @Test
     public void testStudentDeletion() throws Exception {
-        // create a student
-        // test if it is deleted
-        //  - check api controller response status is ok
-        //  - check repository if student is deleted
 
         // Arrange
-        var student = new Student(
-                1L,
-                "Ali Faisal",
-                "alifaisal@gmail.com",
-                "17K-1234",
-                "CS"
-        );
-
-        var jsonStudent = objectToJson(student);
-        if (jsonStudent.isEmpty())
-            throw new Exception("Failed to convert student to json.");
-
-        var postRequest = post("http://localhost:8080/api/v1/students")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(Objects.requireNonNull(jsonStudent.get()));
+        var student = StudentEntityDummyData.getStudentWithId();
+        var jsonStudent = JsonObjectMapper.objectToJson(student);
+        var postRequest = buildPostRequest(jsonStudent);
         var postAction = apiController.perform(postRequest);
+        var deleteRequest = buildDeleteRequest(student.getId());
         postAction.andExpect(status().isOk());
-
-        var deleteRequest = delete("http://localhost:8080/api/v1/students/" + student.getId())
-                .contentType(MediaType.APPLICATION_JSON);
 
         // Act
         var deleteAction = apiController.perform(deleteRequest);
 
         // Assert
+        // Via HttpStatus
         deleteAction.andExpect(status().isOk());
 
-        // Assertion through Repository
+        // Via Repository
         var isStudentDeleted = !studentRepository.existsById(student.getId());
         Assertions.assertTrue(isStudentDeleted);
     }
 
-    private <T> Optional<T> jsonToObject(String json, TypeReference<T> type){
-        try{
-            return Optional.of(new ObjectMapper().readValue(json, type));
-        }
-        catch (JsonProcessingException ex){
-            fail("Failed to convert json to object.");
-            return Optional.empty();
-        }
+    private MockHttpServletRequestBuilder buildPostRequest(String jsonBody){
+        return post(STUDENT_API_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Objects.requireNonNull(jsonBody));
     }
 
-    private Optional<String> objectToJson(Object object){
-        try{
-            var json = new ObjectMapper().writeValueAsString(object);
-            return Optional.of(json);
-        }
-        catch (JsonProcessingException ex){
-            fail("Failed to convert object to json.");
-            return Optional.empty();
-        }
+    private MockHttpServletRequestBuilder buildDeleteRequest(Long id){
+        return delete(String.format(STUDENT_API_URL + "/%s", id))
+                .contentType(MediaType.APPLICATION_JSON);
+    }
+
+    private MockHttpServletRequestBuilder buildGetRequest(){
+        return get(STUDENT_API_URL)
+                .contentType(MediaType.APPLICATION_JSON);
     }
 }

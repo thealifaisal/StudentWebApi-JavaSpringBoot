@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.scalable.student_registration_web_api.student.Student;
+import org.scalable.student_registration_web_api.student.StudentEntityDummyData;
 import org.scalable.student_registration_web_api.student.StudentRepository;
 import org.scalable.student_registration_web_api.student.StudentService;
 import org.scalable.student_registration_web_api.student.exceptions.StudentAlreadyExistsException;
@@ -38,26 +39,22 @@ class StudentServiceTest {
 
     @Test
     void shouldGetAllStudents() {
-        // arrange
-        // act
+        // Arrange
+        // Act
         underTest.getAllStudents();
-        // assert: verifies that studentRepository calls findAll() in studentService.getAllStudents()
+        // Assert: verifies that studentRepository calls findAll() in studentService.getAllStudents()
         verify(studentRepository).findAll();
     }
 
     @Test
     void shouldAddStudentWhenStudentEmailDoesNotExist() throws StudentAlreadyExistsException {
-        // arrange
-        Student student = new Student(
-                "Ali Faisal",
-                "alifaisalaslam@gmail.com",
-                "17K-1234",
-                "Computer Science");
+        // Arrange
+        Student student = StudentEntityDummyData.getStudent();
 
-        // act
+        // Act
         underTest.addStudent(student);
 
-        // assert: verifies that studentRepository calls save(student) in studentService.addStudent(student)
+        // Assert: verifies that studentRepository calls save(student) in studentService.addStudent(student)
         //         verifies that the passed student obj in studentService is same as student obj passed in studentRepository
         //         NOTE: obj comparison is done by reference, and for each of the fields in the obj
         ArgumentCaptor<Student> captor = ArgumentCaptor.forClass(Student.class);
@@ -68,17 +65,13 @@ class StudentServiceTest {
 
     @Test
     void shouldThrowExceptionWhenStudentEmailAlreadyExists() {
-        // arrange
-        Student student = new Student(
-                "Ali Faisal",
-                "alifaisalaslam@gmail.com",
-                "17K-1234",
-                "Computer Science");
+        // Arrange
+        Student student = StudentEntityDummyData.getStudent();
 
         given(studentRepository.selectExistsEmail(anyString())).willReturn(true);
 
-        // act
-        // assert
+        // Act
+        // Assert
         Assertions.assertThrows(StudentAlreadyExistsException.class, () -> underTest.addStudent(student));
 
         // studentRepository.save(student) will never get called, so ignoring its verification in the test
@@ -86,45 +79,39 @@ class StudentServiceTest {
     }
 
     @Test
-    void shouldDeleteWhenStudentWithIdExists() throws StudentNotFoundException, StudentAlreadyExistsException {
-        // arrange
-        Long studentId = 1L;
-        Student student = new Student(
-                studentId,
-                "Ali Faisal",
-                "alifaisalaslam@gmail.com",
-                "17K-1234",
-                "Computer Science");
-        given(studentRepository.findById(studentId)).willReturn(Optional.of(student));
+    void shouldDeleteWhenStudentWithIdExists() throws StudentNotFoundException {
+        // Arrange
+        Student student = StudentEntityDummyData.getStudentWithId();
+        given(studentRepository.findById(student.getId())).willReturn(Optional.of(student));
 
-        // act
-        underTest.deleteStudent(studentId);
+        // Act
+        underTest.deleteStudent(student.getId());
 
-        // assert: verifies that studentRepository calls findById(studentId) in studentService.deleteStudent(studentId)
+        // Assert: verifies that studentRepository calls findById(studentId) in studentService.deleteStudent(studentId)
         //         verifies that the passed studentId obj in studentService is same as studentId obj passed in studentRepository
         //         NOTE: obj comparison is done by reference, and for each of the fields in the obj
         ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
         verify(studentRepository).findById(captor.capture());
         Long capturedStudentId = captor.getValue();
-        Assertions.assertEquals(studentId, capturedStudentId);
+        Assertions.assertEquals(student.getId(), capturedStudentId);
 
-        // assert: verifies that studentRepository calls deleteById(studentId) in studentService.deleteStudent(studentId)
+        // Assert: verifies that studentRepository calls deleteById(studentId) in studentService.deleteStudent(studentId)
         //         verifies that the passed studentId obj in studentService is same as studentId obj passed in studentRepository
         //         NOTE: obj comparison is done by reference, and for each of the fields in the obj
         ArgumentCaptor<Long> captor2 = ArgumentCaptor.forClass(Long.class);
         verify(studentRepository).deleteById(captor2.capture());
         Long capturedStudentId2 = captor2.getValue();
-        Assertions.assertEquals(studentId, capturedStudentId2);
+        Assertions.assertEquals(student.getId(), capturedStudentId2);
     }
 
     @Test
     void shouldThrowExceptionWhenStudentWithIdDoesNotExists() {
-        // arrange
-        Long studentId = 1L;
+        // Arrange
+        Long studentId = StudentEntityDummyData.getStudentWithId().getId();
         given(studentRepository.findById(anyLong())).willReturn(Optional.empty());
 
-        // act
-        // assert
+        // Act
+        // Assert
         Assertions.assertThrows(StudentNotFoundException.class, () -> underTest.deleteStudent(studentId));
 
         // studentRepository.deleteById(studentId) will never get called, so ignoring its verification in the test

@@ -1,4 +1,4 @@
-package org.scalable.amigoscodetests.interceptors;
+package org.scalable.student_registration_web_api.interceptors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

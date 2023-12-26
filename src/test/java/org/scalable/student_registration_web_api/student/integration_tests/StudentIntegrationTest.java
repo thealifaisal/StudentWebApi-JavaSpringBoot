@@ -1,4 +1,4 @@
-package org.scalable.amigoscodetests.student;
+package org.scalable.student_registration_web_api.student.integration_tests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.scalable.student_registration_web_api.student.Student;
+import org.scalable.student_registration_web_api.student.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,8 +46,8 @@ public class StudentIntegrationTest {
         // Arrange
         var student = new Student(
                 "Ali Faisal",
-                "alifaisal@gmail.com",
-                "17K-3791",
+                "alifaisalaslam@gmail.com",
+                "17K-1234",
                 "CS"
         );
 
@@ -89,7 +91,7 @@ public class StudentIntegrationTest {
                 1L,
                 "Ali Faisal",
                 "alifaisal@gmail.com",
-                "17K-3791",
+                "17K-1234",
                 "CS"
         );
 

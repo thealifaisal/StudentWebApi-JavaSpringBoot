@@ -1,8 +1,8 @@
-package org.scalable.amigoscodetests.student;
+package org.scalable.student_registration_web_api.student;
 
 import lombok.AllArgsConstructor;
-import org.scalable.amigoscodetests.student.exceptions.StudentAlreadyExistsException;
-import org.scalable.amigoscodetests.student.exceptions.StudentNotFoundException;
+import org.scalable.student_registration_web_api.student.exceptions.StudentAlreadyExistsException;
+import org.scalable.student_registration_web_api.student.exceptions.StudentNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

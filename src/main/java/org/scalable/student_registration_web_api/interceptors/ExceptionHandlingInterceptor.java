@@ -1,4 +1,4 @@
-package org.scalable.amigoscodetests.interceptors;
+package org.scalable.student_registration_web_api.interceptors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

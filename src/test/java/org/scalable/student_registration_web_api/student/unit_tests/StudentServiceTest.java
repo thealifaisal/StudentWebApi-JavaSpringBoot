@@ -1,4 +1,4 @@
-package org.scalable.amigoscodetests.student;
+package org.scalable.student_registration_web_api.student.unit_tests;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,8 +6,11 @@ import org.junit.jupiter.api.Assertions;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.scalable.amigoscodetests.student.exceptions.StudentAlreadyExistsException;
-import org.scalable.amigoscodetests.student.exceptions.StudentNotFoundException;
+import org.scalable.student_registration_web_api.student.Student;
+import org.scalable.student_registration_web_api.student.StudentRepository;
+import org.scalable.student_registration_web_api.student.StudentService;
+import org.scalable.student_registration_web_api.student.exceptions.StudentAlreadyExistsException;
+import org.scalable.student_registration_web_api.student.exceptions.StudentNotFoundException;
 
 import java.util.Optional;
 
@@ -47,8 +50,8 @@ class StudentServiceTest {
         // arrange
         Student student = new Student(
                 "Ali Faisal",
-                "alifaisal@gmail.com",
-                "K17-3791",
+                "alifaisalaslam@gmail.com",
+                "17K-1234",
                 "Computer Science");
 
         // act
@@ -68,8 +71,8 @@ class StudentServiceTest {
         // arrange
         Student student = new Student(
                 "Ali Faisal",
-                "alifaisal@gmail.com",
-                "K17-3791",
+                "alifaisalaslam@gmail.com",
+                "17K-1234",
                 "Computer Science");
 
         given(studentRepository.selectExistsEmail(anyString())).willReturn(true);
@@ -89,8 +92,8 @@ class StudentServiceTest {
         Student student = new Student(
                 studentId,
                 "Ali Faisal",
-                "alifaisal@gmail.com",
-                "K17-3791",
+                "alifaisalaslam@gmail.com",
+                "17K-1234",
                 "Computer Science");
         given(studentRepository.findById(studentId)).willReturn(Optional.of(student));
 

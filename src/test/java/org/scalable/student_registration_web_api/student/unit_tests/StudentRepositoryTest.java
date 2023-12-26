@@ -1,8 +1,10 @@
-package org.scalable.amigoscodetests.student;
+package org.scalable.student_registration_web_api.student.unit_tests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.scalable.student_registration_web_api.student.Student;
+import org.scalable.student_registration_web_api.student.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -22,8 +24,8 @@ class StudentRepositoryTest {
         //arrange
         Student student = new Student(
                 "Ali Faisal",
-                "alifaisal@gmail.com",
-                "K17-3791",
+                "alifaisalaslam@gmail.com",
+                "17K-1234",
                 "Computer Science");
 
         underTest.save(student);

@@ -1,4 +1,4 @@
-package org.scalable.amigoscodetests.student;
+package org.scalable.student_registration_web_api.student;
 
 import javax.persistence.*;
 import lombok.Getter;

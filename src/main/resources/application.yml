@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/amigos_student
+    url: jdbc:postgresql://localhost:5432/registration_db
     password: Admin123
     username: postgres
   jpa:

@@ -17,8 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -76,6 +75,46 @@ public class StudentIntegrationTest {
         // Assertion through Repository
         var isStudentCreated = studentRepository.selectExistsEmail(student.getEmail());
         Assertions.assertTrue(isStudentCreated);
+    }
+
+    @Test
+    public void testStudentDeletion() throws Exception {
+        // create a student
+        // test if it is deleted
+        //  - check api controller response status is ok
+        //  - check repository if student is deleted
+
+        // Arrange
+        var student = new Student(
+                1L,
+                "Ali Faisal",
+                "alifaisal@gmail.com",
+                "17K-3791",
+                "CS"
+        );
+
+        var jsonStudent = objectToJson(student);
+        if (jsonStudent.isEmpty())
+            throw new Exception("Failed to convert student to json.");
+
+        var postRequest = post("http://localhost:8080/api/v1/students")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(Objects.requireNonNull(jsonStudent.get()));
+        var postAction = apiController.perform(postRequest);
+        postAction.andExpect(status().isOk());
+
+        var deleteRequest = delete("http://localhost:8080/api/v1/students/" + student.getId())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        // Act
+        var deleteAction = apiController.perform(deleteRequest);
+
+        // Assert
+        deleteAction.andExpect(status().isOk());
+
+        // Assertion through Repository
+        var isStudentDeleted = !studentRepository.existsById(student.getId());
+        Assertions.assertTrue(isStudentDeleted);
     }
 
     private <T> Optional<T> jsonToObject(String json, TypeReference<T> type){

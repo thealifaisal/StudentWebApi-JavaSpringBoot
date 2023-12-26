@@ -25,11 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class StudentIntegrationTest {
 
+    private final String STUDENT_API_URL = "http://localhost:8080/api/v1/students";
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
     private MockMvc apiController;
-    private final String STUDENT_API_URL = "http://localhost:8080/api/v1/students";
 
     @AfterEach
     public void tearDown(){

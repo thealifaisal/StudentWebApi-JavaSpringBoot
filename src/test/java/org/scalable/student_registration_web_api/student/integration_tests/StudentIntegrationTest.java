@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.scalable.student_registration_web_api.student.Student;
-import org.scalable.student_registration_web_api.student.StudentEntityDummyData;
+import org.scalable.student_registration_web_api.student.StudentDtoDummyData;
 import org.scalable.student_registration_web_api.student.StudentRepository;
+import org.scalable.student_registration_web_api.student.dtos.StudentDto;
 import org.scalable.student_registration_web_api.utilities.mapper.JsonObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -47,8 +47,8 @@ public class StudentIntegrationTest {
     public void testStudentCreation() throws Exception {
 
         // Arrange
-        var student = StudentEntityDummyData.getStudent();
-        var jsonStudent = JsonObjectMapper.objectToJson(student);
+        var studentDto = StudentDtoDummyData.getStudent();
+        var jsonStudent = JsonObjectMapper.objectToJson(studentDto);
         var postRequest = buildPostRequest(jsonStudent);
         var getRequest = buildGetRequest();
 
@@ -61,11 +61,11 @@ public class StudentIntegrationTest {
 
         // Via GET API
         var getStudentJson = apiController.perform(getRequest).andReturn().getResponse().getContentAsString();
-        var students = JsonObjectMapper.jsonToObject(getStudentJson, new TypeReference<List<Student>>() {});
-        Assertions.assertTrue(students.stream().anyMatch(s -> s.getEmail().equals(student.getEmail())));
+        List<StudentDto> students = JsonObjectMapper.jsonToObject(getStudentJson, new TypeReference<List<StudentDto>>() {});
+        Assertions.assertTrue(students.stream().anyMatch(s -> s.getEmail().equals(studentDto.getEmail())));
 
         // Via Repository
-        var isStudentCreated = studentRepository.selectExistsEmail(student.getEmail());
+        var isStudentCreated = studentRepository.selectExistsEmail(studentDto.getEmail());
         Assertions.assertTrue(isStudentCreated);
     }
 
@@ -80,11 +80,11 @@ public class StudentIntegrationTest {
     public void testStudentDeletion() throws Exception {
 
         // Arrange
-        var student = StudentEntityDummyData.getStudentWithId();
-        var jsonStudent = JsonObjectMapper.objectToJson(student);
+        var studentDto = StudentDtoDummyData.getStudent();
+        var jsonStudent = JsonObjectMapper.objectToJson(studentDto);
         var postRequest = buildPostRequest(jsonStudent);
         var postAction = apiController.perform(postRequest);
-        var deleteRequest = buildDeleteRequest(student.getId());
+        var deleteRequest = buildDeleteRequest(studentDto.getId());
         postAction.andExpect(status().isOk());
 
         // Act
@@ -95,7 +95,7 @@ public class StudentIntegrationTest {
         deleteAction.andExpect(status().isOk());
 
         // Via Repository
-        var isStudentDeleted = !studentRepository.existsById(student.getId());
+        var isStudentDeleted = !studentRepository.existsById(studentDto.getId());
         Assertions.assertTrue(isStudentDeleted);
     }
 

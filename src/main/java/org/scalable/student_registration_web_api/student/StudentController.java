@@ -1,6 +1,7 @@
 package org.scalable.student_registration_web_api.student;
 
 import lombok.AllArgsConstructor;
+import org.scalable.student_registration_web_api.student.dtos.StudentDto;
 import org.scalable.student_registration_web_api.student.exceptions.StudentAlreadyExistsException;
 import org.scalable.student_registration_web_api.student.exceptions.StudentNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,13 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<StudentDto> getAllStudents() {
         return studentService.getAllStudents();
     }
 
     @PostMapping
-    public void addStudent(@RequestBody Student student) throws StudentAlreadyExistsException {
-        studentService.addStudent(student);
+    public void addStudent(@RequestBody StudentDto studentDto) throws StudentAlreadyExistsException {
+        studentService.addStudent(studentDto);
     }
 
     @DeleteMapping("/{id}")

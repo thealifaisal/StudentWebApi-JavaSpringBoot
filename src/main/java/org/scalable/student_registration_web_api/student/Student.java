@@ -2,20 +2,12 @@ package org.scalable.student_registration_web_api.student;
 
 import javax.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
+import org.scalable.student_registration_web_api.student.dtos.StudentDto;
 
 @Getter
-@Setter
 @Entity(name = "student_table")
 public class Student {
     public Student() {
-    }
-
-    public Student(String name, String email, String rollNumber, String department){
-        this.name = name;
-        this.email = email;
-        this.rollNumber = rollNumber;
-        this.department = department;
     }
 
     public Student(Long id, String name, String email, String rollNumber, String department){
@@ -43,4 +35,14 @@ public class Student {
 
     @Column(name = "department", nullable = false)
     private String department;
+
+    public StudentDto toDto(){
+        return new StudentDto(
+                id,
+                name,
+                email,
+                rollNumber,
+                department
+        );
+    }
 }
